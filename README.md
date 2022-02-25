@@ -9,13 +9,16 @@ for TypeScript.
 -  Express, chain and map values as if you were writing in Rust.
 -  Make guarded functions that return at the first sign of trouble (`?`).
 -  Use the `match` adaptation to simplify conditionals.
--  API available both `snake_case` and `camelCase`.
+-  ~~API available both `snake_case` and `camelCase`.~~
 
 Zero dependencies, full test coverage and examples for every function at your
 fingertips with JSDoc comments.
 
-<sub>Exported functions are also types, so VSCode shows them a different
-colour. This might not be a feature but I'm really digging it. YMMV.</sub>
+## Patch 0.9.7
+
+After lots of great feedback, I've decided that the `snake_case` API will be
+removed in the 1.0 release. Patch 0.9.7 moves `camelCase` to the front seat
+without breaking anything.
 
 # Installation
 
