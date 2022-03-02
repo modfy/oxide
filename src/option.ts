@@ -89,13 +89,19 @@ Option.safe = safe;
 Option.all = all;
 Option.any = any;
 
+function safe<T, A extends any[]>(fn: (...args: A) => T, ...args: A): Option<T>;
+function safe<T>(promise: Promise<T>): Promise<Option<T>>;
 function safe<T, A extends any[]>(
-   fn: (...args: A) => T,
+   fn: ((...args: A) => T) | Promise<T>,
    ...args: A
-): Option<T> {
+): Option<T> | Promise<Option<T>> {
+   if (fn instanceof Promise) {
+      return fn.then((value) => Some(value)).catch(() => None);
+   }
+
    try {
       return Some(fn(...args));
-   } catch {
+   } catch (err) {
       return None;
    }
 }

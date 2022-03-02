@@ -102,15 +102,24 @@ Result.any = any;
 function safe<T, A extends any[]>(
    fn: (...args: A) => T,
    ...args: A
-): Result<T, Error> {
+): Result<T, Error>;
+function safe<T>(promise: Promise<T>): Promise<Result<T, Error>>;
+function safe<T, A extends any[]>(
+   fn: ((...args: A) => T) | Promise<T>,
+   ...args: A
+): Result<T, Error> | Promise<Result<T, Error>> {
+   if (fn instanceof Promise) {
+      return fn
+         .then((value) => Ok(value))
+         .catch((err) =>
+            err instanceof Error ? Err(err) : Err(new Error(String(err)))
+         ) as Promise<Result<T, Error>>;
+   }
+
    try {
       return Ok(fn(...args));
    } catch (err) {
-      if (err instanceof Error) {
-         return Err(err);
-      } else {
-         return Err(new Error(String(err)));
-      }
+      return err instanceof Error ? Err(err) : Err(new Error(String(err)));
    }
 }
 
