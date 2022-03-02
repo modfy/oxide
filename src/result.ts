@@ -182,7 +182,7 @@ function safe<T, A extends any[]>(
 /**
  * Converts a number of `Result`s into a single Result. The first `Err` found
  * (if any) is returned, otherwise the new Result is `Ok` and contains an array
- * of all the provided Ok values.
+ * of all the unwrapped values.
  *
  * ```
  * function num(val: number): Result<number, string> {
@@ -218,7 +218,7 @@ function all<R extends Result<any, any>[]>(
 /**
  * Converts a number of `Result`s into a single Result. The first `Ok` found
  * (if any) is returned, otherwise the new Result is an `Err` containing an
- * array of all the provided Err values.
+ * array of all the unwrapped errors.
  *
  * ```
  * function num(val: number): Result<number, string> {

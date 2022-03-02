@@ -164,7 +164,7 @@ function safe<T, A extends any[]>(
 /**
  * Converts a number of `Option`s into a single Option. If any of the provided
  * Options are `None` then the new Option is also None. Otherwise the new
- * Option is `Some` and contains an array of all the provided Some values.
+ * Option is `Some` and contains an array of all the unwrapped values.
  *
  * ```
  * function num(val: number): Option<number> {
