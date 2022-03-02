@@ -1,4 +1,4 @@
-import { Option as BaseOption, isOption, None } from "./monad/option";
+import { Option as BaseOption, isOption, Some, None } from "./monad/option";
 export { Some, None } from "./monad/option";
 
 export type Option<T> = BaseOption<T>;
@@ -7,6 +7,10 @@ export interface OptionGuard {
    <U>(opt: Option<U>): U;
    bubble(opt: unknown): void;
 }
+
+type OptionTypes<O> = {
+   [K in keyof O]: O[K] extends Option<infer T> ? T : never;
+};
 
 /**
  * An Option represents either something, or nothing. If we hold a value
@@ -81,6 +85,44 @@ export function Option<T, A extends any[]>(
 }
 
 Option.is = isOption;
+Option.safe = safe;
+Option.all = all;
+Option.any = any;
+
+function safe<T, A extends any[]>(
+   fn: (...args: A) => T,
+   ...args: A
+): Option<T> {
+   try {
+      return Some(fn(...args));
+   } catch {
+      return None;
+   }
+}
+
+function all<O extends Option<any>[]>(...options: O): Option<OptionTypes<O>> {
+   const some = [];
+   for (const option of options) {
+      if (option.isSome()) {
+         some.push(option.unwrapUnchecked());
+      } else {
+         return None;
+      }
+   }
+
+   return Some(some) as Some<OptionTypes<O>>;
+}
+
+function any<O extends Option<any>[]>(
+   ...options: O
+): Option<OptionTypes<O>[number]> {
+   for (const option of options) {
+      if (option.isSome()) {
+         return option;
+      }
+   }
+   return None;
+}
 
 function guard<U>(opt: Option<U>): U {
    if (opt.isSome()) {
@@ -101,5 +143,8 @@ class GuardedOptionExit {}
 Object.freeze(GuardedOptionExit.prototype);
 Object.freeze(Option);
 Object.freeze(guard);
+Object.freeze(safe);
+Object.freeze(all);
+Object.freeze(any);
 
 const OptionExit = Object.freeze(new GuardedOptionExit());

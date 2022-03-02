@@ -1,4 +1,4 @@
-import { Result as BaseResult, isResult } from "./monad/result";
+import { Result as BaseResult, isResult, Ok, Err } from "./monad/result";
 export { Ok, Err } from "./monad/result";
 
 export type Result<T, E> = BaseResult<T, E>;
@@ -7,6 +7,14 @@ export interface ResultGuard<E> {
    <U>(res: Result<U, E>): U;
    bubble(err: unknown): void;
 }
+
+type ResultTypes<R> = {
+   [K in keyof R]: R[K] extends Result<infer T, any> ? T : never;
+};
+
+type ResultErrors<R> = {
+   [K in keyof R]: R[K] extends Result<any, infer U> ? U : never;
+};
 
 /**
  * A Result represents success, or failure. If we hold a value
@@ -87,6 +95,54 @@ export function Result<T, E, A extends any[]>(
 }
 
 Result.is = isResult;
+Result.safe = safe;
+Result.all = all;
+Result.any = any;
+
+function safe<T, A extends any[]>(
+   fn: (...args: A) => T,
+   ...args: A
+): Result<T, Error> {
+   try {
+      return Ok(fn(...args));
+   } catch (err) {
+      if (err instanceof Error) {
+         return Err(err);
+      } else {
+         return Err(new Error(String(err)));
+      }
+   }
+}
+
+function all<R extends Result<any, any>[]>(
+   ...results: R
+): Result<ResultTypes<R>, ResultErrors<R>[number]> {
+   const ok = [];
+   for (const result of results) {
+      if (result.isOk()) {
+         ok.push(result.unwrapUnchecked());
+      } else {
+         return result;
+      }
+   }
+
+   return Ok(ok) as Ok<ResultTypes<R>, any>;
+}
+
+function any<R extends Result<any, any>[]>(
+   ...results: R
+): Result<ResultTypes<R>[number], ResultErrors<R>> {
+   const err = [];
+   for (const result of results) {
+      if (result.isOk()) {
+         return result;
+      } else {
+         err.push(result.unwrapUnchecked());
+      }
+   }
+
+   return Err(err) as Err<ResultErrors<R>, any>;
+}
 
 function guard<T, E>(res: Result<T, E>): T {
    if (res.isOk()) {
@@ -113,3 +169,6 @@ class GuardedResultExit<E> {
 Object.freeze(GuardedResultExit.prototype);
 Object.freeze(Result);
 Object.freeze(guard);
+Object.freeze(safe);
+Object.freeze(all);
+Object.freeze(any);

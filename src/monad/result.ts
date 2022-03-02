@@ -20,7 +20,6 @@ class ResultType<T, E> {
     * Compares the Result to `cmp`, returns true if both are `Ok` or both
     * are `Err`. Acts as a type guard for `cmp is Result<unknown, unknown>`.
     *
-    * @example
     * const o = Ok(1);
     * const e = Err(1);
     *
