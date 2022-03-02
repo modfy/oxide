@@ -328,7 +328,7 @@ assert.equal(err.unwrapErr(), "Value 5 is too low.");
 Reduce multiple `Option`s or `Result`s into a single one. The first `Some`/`Ok`
 found (if any) is returned, otherwise the outcome is `None`, or in the case of `Result` - an `Err` containing an array of all the unwrapped errors.
 
-````ts
+```ts
 function num(val: number): Result<number, string> {
    return val > 10 ? Ok(val) : Err(`Value ${val} is too low.`);
 }
@@ -370,26 +370,26 @@ function created in this way always returns an `Option<T>`.
 import { Option, Some, None } from "oxide.ts";
 
 function to_pos(pos: number): Option<number> {
- return pos > 0 && pos < 100 ? Some(pos * 10) : None;
+   return pos > 0 && pos < 100 ? Some(pos * 10) : None;
 }
 
 // Creates (x: number, y: number) => Option<{ x: number; y: number }>;
 const get_pos = Option((guard, x: number, y: number) => {
- return Some({
-    x: guard(to_pos(x)),
-    y: guard(to_pos(y)),
- });
+   return Some({
+      x: guard(to_pos(x)),
+      y: guard(to_pos(y)),
+   });
 });
 
 function show_pos(x: number, y: number): string {
- return get_pos(x, y).mapOr("Invalid Pos", ({ x, y }) => `Pos (${x},${y})`);
+   return get_pos(x, y).mapOr("Invalid Pos", ({ x, y }) => `Pos (${x},${y})`);
 }
 
 assert.equal(show_pos(10, 20), "Pos (100,200)");
 assert.equal(show_pos(1, 99), "Pos (10,990)");
 assert.equal(show_pos(0, 50), "Invalid Pos");
 assert.equal(show_pos(50, 100), "Invalid Pos");
-````
+```
 
 _See tests/examples/guard-bubbling.ts for some possible pitfalls when_
 _combined with `try`/`catch`._
