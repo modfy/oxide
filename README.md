@@ -43,7 +43,7 @@ you should also be able to hover over methods to see some examples.
 -  [Transformation](#transformation)
 -  [Nesting](#nesting)
 -  [All](#all)
--  [Any](#any);
+-  [Any](#any)
 -  [Match](#match)
 
 ### Advanced Features
