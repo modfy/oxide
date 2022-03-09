@@ -33,6 +33,9 @@ type OptionTypes<O> = {
  * ```
  *
  * ### Guarded Function Helper
+ * ## DEPRECATED
+ *
+ * This functionality will be removed in version 1.0.0.
  *
  * Calling `Option(fn)` creates a new function with an `OptionGuard` helper.
  * The guard lets you quickly and safely unwrap other `Option` values, and

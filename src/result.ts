@@ -40,6 +40,9 @@ type ResultErrors<R> = {
  * ```
  *
  * ### Guarded Function Helper
+ * ## DEPRECATED
+ *
+ * This functionality will be removed in version 1.0.0.
  *
  * Calling `Result(fn)` creates a new function with a `ResultGuard<E>` helper.
  * The guard lets you quickly and safely unwrap other `Result` values

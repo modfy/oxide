@@ -11,18 +11,13 @@ fingertips with JSDoc comments.
 -  Add more meaning to return types.
 -  Express, chain and map values as if you were writing in Rust.
 -  Use the `match` adaptation to simplify conditionals.
--  Make guarded functions that return at the first sign of trouble (`?`).
--  ~~API available both `snake_case` and `camelCase`.~~
-
-### New features
-
 -  Quickly test multiple Results or Options with `.all` and `.any`.
 -  Convert throws and rejections into Results and Options with `.safe`.
 
-## Patch 0.9.8
+## Patch 0.9.10
 
-Added `.all`, `.any` and `.safe` methods to `Option` and `Result`. Complete
-with tests and usage examples.
+-  ~~Make guarded functions that return at the first sign of trouble (`?`).~~
+-  ~~API available both `snake_case` and `camelCase`.~~
 
 # Installation
 
@@ -50,8 +45,6 @@ you should also be able to hover over methods to see some examples.
 
 -  [Word to the wise](#word-to-the-wise)
 -  [Safe functions and Promises](#safe)
--  [Guarded Option function](#guarded-option-function)
--  [Guarded Result function](#guarded-result-function)
 -  [Combined Match](#combined-matching)
 -  [Match Chains](#chained-matching)
 
@@ -347,95 +340,9 @@ assert.equal(g, "Value 8 is too low.");
 
 # Advanced Features
 
-This section talks about `match`, `Guard` and `_`. Examples here are lifted
-straight from the JSDoc.
-
 ## Word to the wise
 
-At it's heart this library is an implementation of `Option<T>` and
-`Result<T, E>` - it aims to bring them seamlessly to TypeScript. The
-`match` adaptation and guarded functions shift the TypeScript idiom and may
-not be suitable for your project - especially if you work with others.
-
-<sub>They are cool, though...</sub>
-
-# Guarded Option Function
-
-Calling `Option(fn)` creates a new function with an `OptionGuard` helper.
-The guard lets you quickly and safely unwrap other `Option` values, and
-causes the function to return early with `None` if an unwrap fails. A
-function created in this way always returns an `Option<T>`.
-
-```ts
-import { Option, Some, None } from "oxide.ts";
-
-function to_pos(pos: number): Option<number> {
-   return pos > 0 && pos < 100 ? Some(pos * 10) : None;
-}
-
-// Creates (x: number, y: number) => Option<{ x: number; y: number }>;
-const get_pos = Option((guard, x: number, y: number) => {
-   return Some({
-      x: guard(to_pos(x)),
-      y: guard(to_pos(y)),
-   });
-});
-
-function show_pos(x: number, y: number): string {
-   return get_pos(x, y).mapOr("Invalid Pos", ({ x, y }) => `Pos (${x},${y})`);
-}
-
-assert.equal(show_pos(10, 20), "Pos (100,200)");
-assert.equal(show_pos(1, 99), "Pos (10,990)");
-assert.equal(show_pos(0, 50), "Invalid Pos");
-assert.equal(show_pos(50, 100), "Invalid Pos");
-```
-
-_See tests/examples/guard-bubbling.ts for some possible pitfalls when_
-_combined with `try`/`catch`._
-
-[&laquo; To contents](#usage)
-
-# Guarded Result Function
-
-Calling `Result(fn)` creates a new function with a `ResultGuard<E>` helper.
-The guard lets you quickly and safely unwrap other `Result` values
-(providing that they have the same `E` type), and causes the function to
-return early with `Err<E>` if an unwrap fails. A function create in this way
-always returns a `Result<T, E>`.
-
-```ts
-import { Result, Guard, Ok, Err } from "oxide.ts";
-
-function to_pos(pos: number): Result<number, string> {
-   return pos > 0 && pos < 100 ? Ok(pos * 10) : Err("Invalid Pos");
-}
-
-// (x: number, y: number) => Result<{ x: number; y: number }, string>;
-const get_pos = Result((guard: Guard<string>, x: number, y: number) => {
-   return Ok({
-      x: guard(to_pos(x)),
-      y: guard(to_pos(y)),
-   });
-});
-
-function show_pos(x: number, y: number): string {
-   return get_pos(x, y).mapOrElse(
-      (err) => `Error: ${err}`,
-      ({ x, y }) => `Pos (${x},${y})`
-   );
-}
-
-assert.equal(show_pos(10, 20), "Pos (100,200)");
-assert.equal(show_pos(1, 99), "Pos (10,990)");
-assert.equal(show_pos(0, 50), "Error: Invalid Pos");
-assert.equal(show_pos(50, 100), "Error: Invalid Pos");
-```
-
-_See tests/examples/guard-bubbling.ts for some possible pitfalls when_
-_combined with `try`/`catch`._
-
-[&laquo; To contents](#usage)
+The `match` adaptation shifts the TypeScript idiom and may not be suitable for your project - especially if you work with others.
 
 ### Combined Matching
 
