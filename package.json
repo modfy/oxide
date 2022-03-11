@@ -1,11 +1,10 @@
 {
    "name": "@modfy/oxide",
-   "version": "0.9.10",
+   "version": "0.9.11",
    "description": "Rust's Option<T> and Result<T, E>, implemented for TypeScript.",
-   "main": "dist",
-   "types": "dist",
+   "main": "src/index.ts",
    "files": [
-      "dist/**/*"
+      "src"
    ],
    "scripts": {
       "test": "nyc mocha -r ts-node/register 'tests/**/*'"
